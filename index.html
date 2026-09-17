@@ -1,0 +1,2541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Super Admin - Institution Management</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+<style>
+
+/* =========================================================
+   RESET
+========================================================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+}
+
+:root{
+
+    --primary:#5b5ce2;
+    --primary-soft:#eef0ff;
+
+    --background:#f7f8fb;
+
+    --text:#111827;
+
+    --muted:#747b89;
+
+    --border:#e3e6eb;
+
+    --green:#15803d;
+    --green-bg:#f0fdf4;
+
+    --red:#dc2626;
+    --red-bg:#fff1f2;
+
+}
+
+body{
+
+    min-height:100vh;
+
+    background:
+        var(--background);
+
+    color:
+        var(--text);
+
+}
+
+button,
+input,
+textarea{
+    font:inherit;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.header{
+
+    height:66px;
+
+    position:fixed;
+
+    top:0;
+    left:0;
+    right:0;
+
+    z-index:100;
+
+    padding:0 22px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    background:#fff;
+
+    border-bottom:
+        1px solid
+        var(--border);
+
+}
+
+.brand{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:11px;
+
+}
+
+.brand-logo{
+
+    width:42px;
+    height:42px;
+
+    border-radius:12px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:
+        var(--primary-soft);
+
+    font-size:19px;
+
+}
+
+.brand h3{
+
+    font-size:13px;
+
+    font-weight:800;
+
+}
+
+.brand p{
+
+    margin-top:3px;
+
+    color:
+        var(--muted);
+
+    font-size:9px;
+
+}
+
+.admin{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:9px;
+
+}
+
+.admin-avatar{
+
+    width:37px;
+    height:37px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:
+        var(--primary);
+
+    color:#fff;
+
+    font-size:9px;
+
+    font-weight:800;
+
+}
+
+.admin-info strong{
+
+    display:block;
+
+    font-size:9px;
+
+}
+
+.admin-info span{
+
+    display:block;
+
+    margin-top:2px;
+
+    color:
+        var(--muted);
+
+    font-size:8px;
+
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.sidebar{
+
+    position:fixed;
+
+    top:66px;
+    bottom:0;
+    left:0;
+
+    width:235px;
+
+    padding:20px 10px;
+
+    background:#fff;
+
+    border-right:
+        1px solid
+        var(--border);
+
+}
+
+.nav-item{
+
+    width:100%;
+
+    min-height:47px;
+
+    padding:0 15px;
+
+    border:0;
+
+    border-radius:10px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    background:
+        var(--primary-soft);
+
+    color:
+        var(--primary);
+
+    font-size:9px;
+
+    font-weight:700;
+
+}
+
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.content{
+
+    min-height:100vh;
+
+    margin-left:235px;
+
+    padding:
+        100px
+        30px
+        50px;
+
+}
+
+.container{
+
+    width:100%;
+
+    max-width:1100px;
+
+    margin:0 auto;
+
+}
+
+.page-title{
+
+    margin-bottom:25px;
+
+}
+
+.page-title h1{
+
+    font-size:27px;
+
+    font-weight:800;
+
+    letter-spacing:-.6px;
+
+}
+
+.page-title p{
+
+    margin-top:7px;
+
+    color:
+        var(--muted);
+
+    font-size:9px;
+
+}
+
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+.message{
+
+    display:none;
+
+    margin-bottom:18px;
+
+    padding:
+        15px 17px;
+
+    border-radius:11px;
+
+    font-size:9px;
+
+    line-height:1.6;
+
+}
+
+.message.success{
+
+    display:block;
+
+    color:
+        var(--green);
+
+    background:
+        var(--green-bg);
+
+    border:
+        1px solid
+        #bbf7d0;
+
+}
+
+.message.error{
+
+    display:block;
+
+    color:
+        var(--red);
+
+    background:
+        var(--red-bg);
+
+    border:
+        1px solid
+        #fecdd3;
+
+}
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.card{
+
+    overflow:hidden;
+
+    background:#fff;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:17px;
+
+}
+
+.card-header{
+
+    padding:
+        22px 27px;
+
+    border-bottom:
+        1px solid
+        var(--border);
+
+}
+
+.card-header h3{
+
+    font-size:12px;
+
+}
+
+.card-header p{
+
+    margin-top:5px;
+
+    color:
+        var(--muted);
+
+    font-size:8px;
+
+}
+
+.card-body{
+
+    padding:27px;
+
+}
+
+
+/* =========================================================
+   TYPE
+========================================================= */
+
+.type-label{
+
+    display:block;
+
+    margin-bottom:10px;
+
+    font-size:8px;
+
+    font-weight:800;
+
+}
+
+.required{
+
+    color:
+        var(--red);
+
+}
+
+.type-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0,1fr)
+        );
+
+    gap:15px;
+
+    margin-bottom:25px;
+
+}
+
+.type-card{
+
+    min-height:105px;
+
+    padding:18px;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:14px;
+
+    background:#fff;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    text-align:left;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+}
+
+.type-card:hover{
+
+    border-color:
+        #b9bbff;
+
+}
+
+.type-card.active{
+
+    border:
+        2px solid
+        var(--primary);
+
+    background:
+        var(--primary-soft);
+
+}
+
+.type-icon{
+
+    flex:0 0 auto;
+
+    width:50px;
+    height:50px;
+
+    border-radius:12px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:#f5f5f8;
+
+    font-size:20px;
+
+}
+
+.type-card.active
+.type-icon{
+
+    background:#fff;
+
+}
+
+.type-content strong{
+
+    display:block;
+
+    font-size:11px;
+
+}
+
+.type-content small{
+
+    display:block;
+
+    margin-top:5px;
+
+    color:
+        var(--muted);
+
+    font-size:8px;
+
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.form-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0,1fr)
+        );
+
+    gap:18px;
+
+}
+
+.field.full{
+
+    grid-column:
+        1 / -1;
+
+}
+
+.field label{
+
+    display:block;
+
+    margin-bottom:8px;
+
+    font-size:8px;
+
+    font-weight:800;
+
+}
+
+.field input,
+.field textarea{
+
+    width:100%;
+
+    outline:none;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:10px;
+
+    background:#fff;
+
+    color:
+        var(--text);
+
+    font-size:9px;
+
+    transition:.2s;
+
+}
+
+.field input{
+
+    height:48px;
+
+    padding:
+        0 14px;
+
+}
+
+.field textarea{
+
+    min-height:105px;
+
+    padding:14px;
+
+    resize:vertical;
+
+}
+
+.field input:focus,
+.field textarea:focus{
+
+    border-color:
+        var(--primary);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(
+            91,
+            92,
+            226,
+            .08
+        );
+
+}
+
+.field input::placeholder,
+.field textarea::placeholder{
+
+    color:#a1a6b0;
+
+}
+
+
+/* =========================================================
+   LOGO
+========================================================= */
+
+.logo-upload{
+
+    position:relative;
+
+    min-height:155px;
+
+    border:
+        1px dashed
+        #cdd1d8;
+
+    border-radius:13px;
+
+    background:#fafbfc;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    overflow:hidden;
+
+}
+
+.logo-placeholder{
+
+    padding:20px;
+
+    text-align:center;
+
+}
+
+.logo-default-icon{
+
+    width:51px;
+    height:51px;
+
+    margin:
+        0 auto 9px;
+
+    border-radius:13px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:
+        var(--primary-soft);
+
+    font-size:21px;
+
+}
+
+.logo-placeholder strong{
+
+    display:block;
+
+    font-size:9px;
+
+}
+
+.logo-placeholder span{
+
+    display:block;
+
+    margin-top:5px;
+
+    color:
+        var(--muted);
+
+    font-size:8px;
+
+}
+
+.choose-logo{
+
+    height:33px;
+
+    margin-top:11px;
+
+    padding:
+        0 13px;
+
+    border-radius:8px;
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:
+        var(--primary);
+
+    color:#fff;
+
+    font-size:8px;
+
+    font-weight:800;
+
+    cursor:pointer;
+
+}
+
+.file-input{
+
+    display:none;
+
+}
+
+.logo-preview-box{
+
+    display:none;
+
+    width:100%;
+
+    padding:18px;
+
+    align-items:center;
+
+    justify-content:center;
+
+    flex-direction:column;
+
+    gap:10px;
+
+}
+
+.logo-preview-box img{
+
+    width:90px;
+    height:90px;
+
+    border-radius:14px;
+
+    object-fit:contain;
+
+    background:#fff;
+
+    border:
+        1px solid
+        var(--border);
+
+}
+
+.logo-buttons{
+
+    display:flex;
+
+    gap:8px;
+
+}
+
+.small-btn{
+
+    min-height:31px;
+
+    padding:
+        0 11px;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius:8px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:#fff;
+
+    color:#444;
+
+    font-size:8px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+}
+
+.small-btn.remove{
+
+    color:
+        var(--red);
+
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.actions{
+
+    margin-top:27px;
+
+    padding-top:22px;
+
+    border-top:
+        1px solid
+        var(--border);
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    gap:10px;
+
+}
+
+.cancel-btn,
+.save-btn{
+
+    height:43px;
+
+    padding:
+        0 18px;
+
+    border-radius:9px;
+
+    font-size:8px;
+
+    font-weight:800;
+
+    cursor:pointer;
+
+}
+
+.cancel-btn{
+
+    border:
+        1px solid
+        var(--border);
+
+    background:#fff;
+
+    color:#555;
+
+}
+
+.save-btn{
+
+    min-width:145px;
+
+    border:0;
+
+    background:
+        var(--primary);
+
+    color:#fff;
+
+}
+
+.save-btn:disabled{
+
+    opacity:.55;
+
+    cursor:not-allowed;
+
+}
+
+
+/* =========================================================
+   RESULT
+========================================================= */
+
+.created-result{
+
+    display:none;
+
+    margin-top:20px;
+
+    padding:18px;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0,1fr)
+        );
+
+    gap:15px;
+
+    border:
+        1px solid
+        #d8d9ff;
+
+    border-radius:12px;
+
+    background:#f8f8ff;
+
+}
+
+.created-result span{
+
+    display:block;
+
+    color:
+        var(--muted);
+
+    font-size:7px;
+
+    font-weight:700;
+
+}
+
+.created-result strong{
+
+    display:block;
+
+    margin-top:6px;
+
+    color:
+        var(--primary);
+
+    font-size:16px;
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:760px){
+
+    .header{
+
+        height:62px;
+
+        padding:
+            0 13px;
+
+    }
+
+    .brand-logo{
+
+        width:38px;
+        height:38px;
+
+    }
+
+    .brand h3{
+
+        font-size:10px;
+
+    }
+
+    .brand p{
+
+        font-size:7px;
+
+    }
+
+    .admin-info{
+
+        display:none;
+
+    }
+
+    .sidebar{
+
+        top:62px;
+
+        width:100%;
+
+        height:50px;
+
+        bottom:auto;
+
+        padding:
+            6px 10px;
+
+        border-right:0;
+
+        border-bottom:
+            1px solid
+            var(--border);
+
+    }
+
+    .nav-item{
+
+        min-height:38px;
+
+        justify-content:center;
+
+    }
+
+    .content{
+
+        margin-left:0;
+
+        padding:
+            138px
+            12px
+            30px;
+
+    }
+
+    .page-title h1{
+
+        font-size:22px;
+
+    }
+
+    .card-header{
+
+        padding:18px;
+
+    }
+
+    .card-body{
+
+        padding:17px;
+
+    }
+
+    .type-grid{
+
+        gap:9px;
+
+    }
+
+    .type-card{
+
+        min-height:88px;
+
+        padding:12px;
+
+        gap:10px;
+
+    }
+
+    .type-icon{
+
+        width:42px;
+        height:42px;
+
+        font-size:18px;
+
+    }
+
+    .form-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .field.full{
+
+        grid-column:auto;
+
+    }
+
+    .actions{
+
+        display:grid;
+
+        grid-template-columns:
+            1fr 1fr;
+
+    }
+
+    .cancel-btn,
+    .save-btn{
+
+        width:100%;
+
+    }
+
+    .created-result{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- ======================================================
+     HEADER
+======================================================= -->
+
+<header class="header">
+
+    <div class="brand">
+
+        <div class="brand-logo">
+            🎓
+        </div>
+
+        <div>
+
+            <h3>
+                Admin Panel
+            </h3>
+
+            <p>
+                Institution Management
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="admin">
+
+        <div class="admin-avatar">
+            SA
+        </div>
+
+        <div class="admin-info">
+
+            <strong>
+                Super Admin
+            </strong>
+
+            <span>
+                Administrator
+            </span>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<!-- ======================================================
+     SIDEBAR
+======================================================= -->
+
+<aside class="sidebar">
+
+    <button class="nav-item">
+
+        <span>
+            ▣
+        </span>
+
+        Institutions
+
+    </button>
+
+</aside>
+
+
+<!-- ======================================================
+     MAIN
+======================================================= -->
+
+<main class="content">
+
+<div class="container">
+
+
+    <div class="page-title">
+
+        <h1>
+            Create Institution
+        </h1>
+
+        <p>
+            Add a new School or College to the platform.
+        </p>
+
+    </div>
+
+
+    <div
+        id="message"
+        class="message"
+    ></div>
+
+
+    <div class="card">
+
+
+        <div class="card-header">
+
+            <h3>
+                Institution Details
+            </h3>
+
+            <p>
+                Enter the institution information below.
+            </p>
+
+        </div>
+
+
+        <div class="card-body">
+
+
+            <!-- TYPE -->
+
+            <label class="type-label">
+
+                INSTITUTION TYPE
+
+                <span class="required">
+                    *
+                </span>
+
+            </label>
+
+
+            <div class="type-grid">
+
+
+                <button
+                    type="button"
+                    class="type-card active"
+                    id="schoolCard"
+                    onclick="selectType('School')"
+                >
+
+                    <span class="type-icon">
+                        🏫
+                    </span>
+
+                    <span class="type-content">
+
+                        <strong>
+                            School
+                        </strong>
+
+                        <small>
+                            School institution
+                        </small>
+
+                    </span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="type-card"
+                    id="collegeCard"
+                    onclick="selectType('College')"
+                >
+
+                    <span class="type-icon">
+                        🎓
+                    </span>
+
+                    <span class="type-content">
+
+                        <strong>
+                            College
+                        </strong>
+
+                        <small>
+                            College institution
+                        </small>
+
+                    </span>
+
+                </button>
+
+
+            </div>
+
+
+            <!-- FORM -->
+
+            <div class="form-grid">
+
+
+                <div class="field">
+
+                    <label>
+
+                        INSTITUTION NAME
+
+                        <span class="required">
+                            *
+                        </span>
+
+                    </label>
+
+
+                    <input
+                        id="institutionName"
+                        type="text"
+                        placeholder="Enter institution name"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        BRANCH
+                    </label>
+
+
+                    <input
+                        id="branch"
+                        type="text"
+                        placeholder="Example: Main Branch"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        MOBILE NUMBER
+                    </label>
+
+
+                    <input
+                        id="mobile"
+                        type="tel"
+                        inputmode="numeric"
+                        placeholder="Enter mobile number"
+                        oninput="
+                            this.value =
+                            this.value.replace(/\D/g,'')
+                        "
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+
+                        EMAIL
+
+                        <span class="required">
+                            *
+                        </span>
+
+                    </label>
+
+
+                    <input
+                        id="email"
+                        type="email"
+                        placeholder="Enter institution email"
+                    >
+
+                </div>
+
+
+                <!-- LOGO -->
+
+                <div class="field full">
+
+                    <label>
+                        INSTITUTION LOGO
+                    </label>
+
+
+                    <div class="logo-upload">
+
+
+                        <div
+                            class="logo-placeholder"
+                            id="logoPlaceholder"
+                        >
+
+                            <div
+                                class="logo-default-icon"
+                                id="logoDefaultIcon"
+                            >
+                                🏫
+                            </div>
+
+
+                            <strong>
+                                Institution Logo
+                            </strong>
+
+
+                            <span>
+                                Choose an image from your device
+                            </span>
+
+
+                            <label
+                                class="choose-logo"
+                                for="logoInput"
+                            >
+                                Choose Logo
+                            </label>
+
+                        </div>
+
+
+                        <div
+                            class="logo-preview-box"
+                            id="logoPreviewBox"
+                        >
+
+                            <img
+                                id="logoPreview"
+                                alt="Institution Logo"
+                            >
+
+
+                            <div class="logo-buttons">
+
+                                <label
+                                    class="small-btn"
+                                    for="logoInput"
+                                >
+                                    Change
+                                </label>
+
+
+                                <button
+                                    type="button"
+                                    class="small-btn remove"
+                                    onclick="removeLogo()"
+                                >
+                                    Remove
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        <input
+                            id="logoInput"
+                            class="file-input"
+                            type="file"
+                            accept="image/*"
+                            onchange="handleLogo(event)"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- ADDRESS -->
+
+                <div class="field full">
+
+                    <label>
+                        ADDRESS
+                    </label>
+
+
+                    <textarea
+                        id="address"
+                        placeholder="Enter institution address"
+                    ></textarea>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- ACTIONS -->
+
+            <div class="actions">
+
+
+                <button
+                    type="button"
+                    class="cancel-btn"
+                    onclick="resetForm()"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    type="button"
+                    class="save-btn"
+                    id="saveBtn"
+                    onclick="saveInstitution()"
+                >
+                    Save Institution
+                </button>
+
+
+            </div>
+
+
+            <!-- RESULT -->
+
+            <div
+                class="created-result"
+                id="createdResult"
+            >
+
+                <div>
+
+                    <span>
+                        CREATED INSTITUTION ID
+                    </span>
+
+                    <strong
+                        id="createdInstitutionId"
+                    >
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        INSTITUTION TYPE
+                    </span>
+
+                    <strong
+                        id="createdInstitutionType"
+                    >
+                        -
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+</div>
+
+</main>
+
+
+<script>
+
+/* =========================================================
+   SUPABASE KEYS
+========================================================= */
+
+
+/*
+   BRO, IKKADA NEE NEW SUPABASE VALUES PASTE CHEYYI.
+
+   Supabase:
+   Project Settings
+       ↓
+   API
+
+   Copy:
+   Project URL
+   Publishable key / anon key
+
+
+   SERVICE ROLE KEY USE CHEYYAKU.
+*/
+
+
+const SUPABASE_URL =
+    "https://wqduicdjhrlhckkahwjt.supabase.co/";
+
+
+const SUPABASE_ANON_KEY =
+    "sb_publishable_zhMlESulGJdiiKA0MhKZPQ_I0VgenF8";
+
+
+/* =========================================================
+   SUPABASE CLIENT
+========================================================= */
+
+const supabaseClient =
+    supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+    );
+
+
+/* =========================================================
+   STORAGE BUCKET
+========================================================= */
+
+const LOGO_BUCKET =
+    "institution-logos";
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+let selectedInstitutionType =
+    "School";
+
+
+let selectedLogoFile =
+    null;
+
+
+/* =========================================================
+   SELECT SCHOOL / COLLEGE
+========================================================= */
+
+function selectType(type){
+
+    selectedInstitutionType =
+        type;
+
+
+    document
+        .getElementById("schoolCard")
+        .classList.toggle(
+            "active",
+            type === "School"
+        );
+
+
+    document
+        .getElementById("collegeCard")
+        .classList.toggle(
+            "active",
+            type === "College"
+        );
+
+
+    document
+        .getElementById("logoDefaultIcon")
+        .textContent =
+            type === "School"
+                ? "🏫"
+                : "🎓";
+
+}
+
+
+/* =========================================================
+   LOGO SELECT
+========================================================= */
+
+function handleLogo(event){
+
+    const file =
+        event.target.files[0];
+
+
+    if(!file){
+
+        return;
+
+    }
+
+
+    /*
+       No 5MB restriction.
+       No JPG-only restriction.
+       Browser image/* allowed.
+    */
+
+    selectedLogoFile =
+        file;
+
+
+    const reader =
+        new FileReader();
+
+
+    reader.onload =
+        function(e){
+
+            document
+                .getElementById(
+                    "logoPreview"
+                )
+                .src =
+                    e.target.result;
+
+
+            document
+                .getElementById(
+                    "logoPlaceholder"
+                )
+                .style.display =
+                    "none";
+
+
+            document
+                .getElementById(
+                    "logoPreviewBox"
+                )
+                .style.display =
+                    "flex";
+
+        };
+
+
+    reader.readAsDataURL(
+        file
+    );
+
+}
+
+
+/* =========================================================
+   REMOVE LOGO
+========================================================= */
+
+function removeLogo(){
+
+    selectedLogoFile =
+        null;
+
+
+    document
+        .getElementById(
+            "logoInput"
+        )
+        .value =
+            "";
+
+
+    document
+        .getElementById(
+            "logoPreview"
+        )
+        .src =
+            "";
+
+
+    document
+        .getElementById(
+            "logoPreviewBox"
+        )
+        .style.display =
+            "none";
+
+
+    document
+        .getElementById(
+            "logoPlaceholder"
+        )
+        .style.display =
+            "block";
+
+}
+
+
+/* =========================================================
+   GENERATE INSTITUTION ID
+========================================================= */
+
+async function generateInstitutionId(type){
+
+    const prefix =
+        type === "School"
+            ? "SCH"
+            : "CLG";
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+        .from("institutions")
+        .select(
+            "institution_id"
+        )
+        .eq(
+            "institution_type",
+            type
+        );
+
+
+    if(error){
+
+        throw new Error(
+            "Unable to generate institution ID: " +
+            error.message
+        );
+
+    }
+
+
+    let highestNumber =
+        0;
+
+
+    if(data){
+
+        data.forEach(
+            function(row){
+
+                const currentId =
+                    row.institution_id ||
+                    "";
+
+
+                if(
+                    currentId.startsWith(
+                        prefix
+                    )
+                ){
+
+                    const number =
+                        parseInt(
+                            currentId.substring(
+                                prefix.length
+                            ),
+                            10
+                        );
+
+
+                    if(
+                        !isNaN(number) &&
+                        number > highestNumber
+                    ){
+
+                        highestNumber =
+                            number;
+
+                    }
+
+                }
+
+            }
+        );
+
+    }
+
+
+    return (
+        prefix +
+        String(
+            highestNumber + 1
+        ).padStart(
+            4,
+            "0"
+        )
+    );
+
+}
+
+
+/* =========================================================
+   CHECK EMAIL
+========================================================= */
+
+async function checkEmailExists(email){
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+        .from("institutions")
+        .select("id")
+        .eq(
+            "email",
+            email
+        )
+        .limit(1);
+
+
+    if(error){
+
+        throw new Error(
+            "Email check failed: " +
+            error.message
+        );
+
+    }
+
+
+    return (
+        data &&
+        data.length > 0
+    );
+
+}
+
+
+/* =========================================================
+   UPLOAD LOGO
+========================================================= */
+
+async function uploadInstitutionLogo(
+    institutionId
+){
+
+    if(!selectedLogoFile){
+
+        return null;
+
+    }
+
+
+    let extension =
+        "img";
+
+
+    if(
+        selectedLogoFile.name &&
+        selectedLogoFile.name.includes(".")
+    ){
+
+        extension =
+            selectedLogoFile.name
+                .split(".")
+                .pop()
+                .toLowerCase();
+
+    }
+
+
+    const fileName =
+        "logo-" +
+        Date.now() +
+        "." +
+        extension;
+
+
+    const filePath =
+        institutionId +
+        "/" +
+        fileName;
+
+
+    const {
+        error
+    } =
+        await supabaseClient
+        .storage
+        .from(
+            LOGO_BUCKET
+        )
+        .upload(
+            filePath,
+            selectedLogoFile,
+            {
+                cacheControl:
+                    "3600",
+
+                upsert:
+                    false
+            }
+        );
+
+
+    if(error){
+
+        throw new Error(
+            "Logo upload failed: " +
+            error.message
+        );
+
+    }
+
+
+    const {
+        data
+    } =
+        supabaseClient
+        .storage
+        .from(
+            LOGO_BUCKET
+        )
+        .getPublicUrl(
+            filePath
+        );
+
+
+    if(
+        !data ||
+        !data.publicUrl
+    ){
+
+        throw new Error(
+            "Logo URL could not be generated."
+        );
+
+    }
+
+
+    return data.publicUrl;
+
+}
+
+
+/* =========================================================
+   SAVE INSTITUTION
+========================================================= */
+
+async function saveInstitution(){
+
+    const saveBtn =
+        document.getElementById(
+            "saveBtn"
+        );
+
+
+    try{
+
+        hideMessage();
+
+
+        /* ----------------------------------------------
+           GET FORM VALUES
+        ---------------------------------------------- */
+
+        const institutionName =
+            document
+            .getElementById(
+                "institutionName"
+            )
+            .value
+            .trim();
+
+
+        const branch =
+            document
+            .getElementById(
+                "branch"
+            )
+            .value
+            .trim();
+
+
+        const mobile =
+            document
+            .getElementById(
+                "mobile"
+            )
+            .value
+            .trim();
+
+
+        const email =
+            document
+            .getElementById(
+                "email"
+            )
+            .value
+            .trim()
+            .toLowerCase();
+
+
+        const address =
+            document
+            .getElementById(
+                "address"
+            )
+            .value
+            .trim();
+
+
+        /* ----------------------------------------------
+           VALIDATION
+        ---------------------------------------------- */
+
+        if(!institutionName){
+
+            showMessage(
+                "Please enter institution name.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if(!email){
+
+            showMessage(
+                "Please enter institution email.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if(
+            mobile &&
+            mobile.length < 10
+        ){
+
+            showMessage(
+                "Please enter a valid mobile number.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        /* ----------------------------------------------
+           BUTTON
+        ---------------------------------------------- */
+
+        saveBtn.disabled =
+            true;
+
+
+        saveBtn.textContent =
+            "Checking...";
+
+
+        /* ----------------------------------------------
+           DUPLICATE EMAIL
+        ---------------------------------------------- */
+
+        const emailExists =
+            await checkEmailExists(
+                email
+            );
+
+
+        if(emailExists){
+
+            showMessage(
+                "This institution email is already registered.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        /* ----------------------------------------------
+           GENERATE ID
+        ---------------------------------------------- */
+
+        saveBtn.textContent =
+            "Generating ID...";
+
+
+        const institutionId =
+            await generateInstitutionId(
+                selectedInstitutionType
+            );
+
+
+        /* ----------------------------------------------
+           LOGO UPLOAD
+        ---------------------------------------------- */
+
+        let logoUrl =
+            null;
+
+
+        if(selectedLogoFile){
+
+            saveBtn.textContent =
+                "Uploading Logo...";
+
+
+            logoUrl =
+                await uploadInstitutionLogo(
+                    institutionId
+                );
+
+        }
+
+
+        /* ----------------------------------------------
+           DATABASE INSERT
+        ---------------------------------------------- */
+
+        saveBtn.textContent =
+            "Saving...";
+
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+            .from("institutions")
+            .insert({
+
+                institution_id:
+                    institutionId,
+
+                institution_type:
+                    selectedInstitutionType,
+
+                institution_name:
+                    institutionName,
+
+                mobile:
+                    mobile || null,
+
+                email:
+                    email,
+
+                branches:
+                    branch || null,
+
+                address:
+                    address || null,
+
+                logo_url:
+                    logoUrl,
+
+                status:
+                    "active"
+
+            })
+            .select()
+            .single();
+
+
+        if(error){
+
+            throw new Error(
+                "Database save failed: " +
+                error.message
+            );
+
+        }
+
+
+        console.log(
+            "Institution created:",
+            data
+        );
+
+
+        /* ----------------------------------------------
+           SHOW RESULT
+        ---------------------------------------------- */
+
+        document
+            .getElementById(
+                "createdInstitutionId"
+            )
+            .textContent =
+                institutionId;
+
+
+        document
+            .getElementById(
+                "createdInstitutionType"
+            )
+            .textContent =
+                selectedInstitutionType;
+
+
+        document
+            .getElementById(
+                "createdResult"
+            )
+            .style.display =
+                "grid";
+
+
+        showMessage(
+            "Institution created successfully. Institution ID: " +
+            institutionId,
+            "success"
+        );
+
+
+        /* ----------------------------------------------
+           CLEAR FORM
+        ---------------------------------------------- */
+
+        clearForm();
+
+    }
+    catch(error){
+
+        console.error(
+            "CREATE INSTITUTION ERROR:",
+            error
+        );
+
+
+        showMessage(
+            error.message ||
+            "Something went wrong.",
+            "error"
+        );
+
+    }
+    finally{
+
+        saveBtn.disabled =
+            false;
+
+
+        saveBtn.textContent =
+            "Save Institution";
+
+    }
+
+}
+
+
+/* =========================================================
+   CLEAR FORM
+========================================================= */
+
+function clearForm(){
+
+    document
+        .getElementById(
+            "institutionName"
+        )
+        .value =
+            "";
+
+
+    document
+        .getElementById(
+            "branch"
+        )
+        .value =
+            "";
+
+
+    document
+        .getElementById(
+            "mobile"
+        )
+        .value =
+            "";
+
+
+    document
+        .getElementById(
+            "email"
+        )
+        .value =
+            "";
+
+
+    document
+        .getElementById(
+            "address"
+        )
+        .value =
+            "";
+
+
+    removeLogo();
+
+}
+
+
+/* =========================================================
+   RESET FORM
+========================================================= */
+
+function resetForm(){
+
+    clearForm();
+
+
+    document
+        .getElementById(
+            "createdResult"
+        )
+        .style.display =
+            "none";
+
+
+    hideMessage();
+
+
+    selectType(
+        "School"
+    );
+
+}
+
+
+/* =========================================================
+   SHOW MESSAGE
+========================================================= */
+
+function showMessage(
+    text,
+    type
+){
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+
+    message.textContent =
+        text;
+
+
+    message.className =
+        "message " +
+        type;
+
+
+    window.scrollTo({
+
+        top:0,
+
+        behavior:"smooth"
+
+    });
+
+}
+
+
+/* =========================================================
+   HIDE MESSAGE
+========================================================= */
+
+function hideMessage(){
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+
+    message.textContent =
+        "";
+
+
+    message.className =
+        "message";
+
+}
+
+
+/* =========================================================
+   INITIAL
+========================================================= */
+
+selectType(
+    "School"
+);
+
+</script>
+
+</body>
+</html>
